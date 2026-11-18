@@ -7,14 +7,16 @@ import { createAppRouter } from '../index'
 
 enableAutoUnmount(afterEach)
 beforeEach(() => {
+  sessionStorage.clear()
   vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
 })
 afterEach(() => vi.restoreAllMocks())
 
 async function openPage(path) {
-  const router = createAppRouter(createMemoryHistory())
+  const pinia = createPinia()
+  const router = createAppRouter(pinia, createMemoryHistory())
   await router.push(path)
-  const wrapper = mount(App, { global: { plugins: [createPinia(), router] } })
+  const wrapper = mount(App, { global: { plugins: [pinia, router] } })
   return { router, wrapper }
 }
 
@@ -24,27 +26,55 @@ async function follow(link) {
 }
 
 describe('navigation SeenFlix', () => {
-  it('ouvre le formulaire de connexion en gardant une seule barre de navigation', async () => {
+  it('connecte, ouvre Profil et Mes avis, puis déconnecte depuis le menu', async () => {
     const { router, wrapper } = await openPage('/home')
-    expect(wrapper.findAll('header')).toHaveLength(1)
+    expect(wrapper.get('.auth-buttons button[disabled]').text()).toBe("S'inscrire")
+    expect(wrapper.find('.account-toggle').exists()).toBe(false)
 
-    await follow(wrapper.get('nav a[href="/connexion"]'))
+    await follow(wrapper.get('.auth-buttons a[href="/connexion"]'))
     await vi.waitFor(() => expect(router.currentRoute.value.path).toBe('/connexion'))
     await flushPromises()
 
-    expect(wrapper.findAll('header')).toHaveLength(1)
-    expect(wrapper.findAll('main')).toHaveLength(1)
-    expect(wrapper.get('main form input[type="email"]').exists()).toBe(true)
-    await wrapper.get('.auth-switch button').trigger('click')
-    expect(wrapper.get('#auth-title').text()).toBe('Créer un compte.')
+    await follow(wrapper.get('main button'))
+    expect(router.currentRoute.value.path).toBe('/profile')
+    expect(wrapper.get('main').text()).toContain('Compte de démonstration')
+    expect(wrapper.find('.auth-buttons a[href="/connexion"]').exists()).toBe(false)
+
+    await wrapper.get('.account-toggle').trigger('click')
+    expect(wrapper.get('.account-toggle').attributes('aria-expanded')).toBe('true')
+    await wrapper.get('.account-toggle').trigger('keydown', { key: 'Escape' })
+    expect(wrapper.get('.account-links').isVisible()).toBe(false)
+
+    await wrapper.get('.account-toggle').trigger('click')
+    await follow(wrapper.get('.account-links a[href="/mes-avis"]'))
+    expect(router.currentRoute.value.path).toBe('/mes-avis')
+    expect(wrapper.get('main h1').text()).toBe('Mes avis')
+    expect(wrapper.get('.account-links').isVisible()).toBe(false)
+
+    await wrapper.get('.account-toggle').trigger('click')
+    await follow(wrapper.get('.account-links a[href="/profile"]'))
+    expect(router.currentRoute.value.path).toBe('/profile')
+
+    await wrapper.get('.account-toggle').trigger('click')
+    await follow(wrapper.get('.account-links button'))
+    expect(router.currentRoute.value.path).toBe('/home')
+    expect(wrapper.find('.auth-buttons a[href="/connexion"]').exists()).toBe(true)
+    expect(wrapper.find('.account-toggle').exists()).toBe(false)
+
+    const reopened = await openPage('/profile')
+    expect(reopened.router.currentRoute.value.path).toBe('/connexion')
   })
 
-  it('ouvre le profil de démonstration depuis la barre de navigation', async () => {
-    const { router, wrapper } = await openPage('/home')
+  it('redirige les visiteurs vers la connexion et conserve la session après rechargement', async () => {
+    const { router, wrapper } = await openPage('/mes-avis')
+    expect(router.currentRoute.value.path).toBe('/connexion')
 
-    await follow(wrapper.get('nav a[href="/profile"]'))
-    expect(router.currentRoute.value.path).toBe('/profile')
-    expect(wrapper.get('main h1').text()).toBe('Profil')
+    await follow(wrapper.get('main button'))
+    expect(router.currentRoute.value.path).toBe('/mes-avis')
+
+    const reopened = await openPage('/profile')
+    expect(reopened.router.currentRoute.value.path).toBe('/profile')
+    expect(reopened.wrapper.get('main').text()).toContain('Compte de démonstration')
   })
 
   it('redirige la racine vers l’accueil et ouvre la fiche du film en vedette', async () => {

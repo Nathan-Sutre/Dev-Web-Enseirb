@@ -3,9 +3,11 @@ import HomeView from '../views/HomeView.vue'
 import MediaCatalog from '../components/MediaCatalog.vue'
 import MediaDetailView from '../views/MediaDetailView.vue'
 import ProfileView from '../views/ProfileView.vue'
+import ReviewsView from '../views/ReviewsView.vue'
+import { useAuthStore } from '../stores/auth'
 
-export function createAppRouter(history = createWebHistory(import.meta.env.BASE_URL)) {
-  return createRouter({
+export function createAppRouter(pinia, history = createWebHistory(import.meta.env.BASE_URL)) {
+  const router = createRouter({
     history,
     scrollBehavior(to, from, savedPosition) {
       return savedPosition ?? { top: 0 }
@@ -33,7 +35,8 @@ export function createAppRouter(history = createWebHistory(import.meta.env.BASE_
         component: MediaCatalog,
         props: { title: 'Ma liste de films', favoritesOnly: true },
       },
-      { path: '/profile', name: 'profile', component: ProfileView },
+      { path: '/profile', name: 'profile', component: ProfileView, meta: { requiresAuth: true } },
+      { path: '/mes-avis', name: 'reviews', component: ReviewsView, meta: { requiresAuth: true } },
       {
         path: '/connexion',
         name: 'connexion',
@@ -41,6 +44,18 @@ export function createAppRouter(history = createWebHistory(import.meta.env.BASE_
       },
     ],
   })
-}
 
-export default createAppRouter()
+  router.beforeEach((to) => {
+    const auth = useAuthStore(pinia)
+
+    if (to.meta.requiresAuth && !auth.isLoggedIn) {
+      return { name: 'connexion', query: { next: to.name } }
+    }
+
+    if (to.name === 'connexion' && auth.isLoggedIn) {
+      return { name: 'profile' }
+    }
+  })
+
+  return router
+}
