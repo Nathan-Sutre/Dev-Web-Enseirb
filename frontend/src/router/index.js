@@ -33,7 +33,7 @@ export function createAppRouter(pinia, history = createWebHistory(import.meta.en
         path: '/favorite',
         name: 'favorite',
         component: MediaCatalog,
-        props: { title: 'Ma liste de films', favoritesOnly: true },
+        props: { title: 'Ma liste', favoritesOnly: true, mixed: true },
       },
       { path: '/profile', name: 'profile', component: ProfileView, meta: { requiresAuth: true } },
       { path: '/mes-avis', name: 'reviews', component: ReviewsView, meta: { requiresAuth: true } },
