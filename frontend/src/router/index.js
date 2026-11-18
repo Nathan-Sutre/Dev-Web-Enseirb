@@ -31,7 +31,7 @@ export function createAppRouter(history = createWebHistory(import.meta.env.BASE_
         path: '/favorite',
         name: 'favorite',
         component: MediaCatalog,
-        props: { title: 'Ma liste de films', favoritesOnly: true },
+        props: { title: 'Ma liste', favoritesOnly: true, mixed: true },
       },
       { path: '/profile', name: 'profile', component: ProfileView },
       {

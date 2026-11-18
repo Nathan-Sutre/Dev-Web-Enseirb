@@ -26,8 +26,8 @@ const item = computed(() => (props.isSeries ? series : movies).find((entry) => S
         <h1 id="detail-title">{{ item.title }}</h1>
         <p class="movie-meta">{{ item.year }} · {{ item.genre }} · {{ item.duration }} · ★ {{ item.score }}</p>
         <p class="detail-description">{{ item.description }}</p>
-        <button v-if="!isSeries" class="primary-button" :aria-pressed="favorites.has(item.id)" @click="favorites.toggle(item.id)">
-          {{ favorites.has(item.id) ? '✓ Dans ma liste' : '+ Ajouter à ma liste' }}
+        <button class="primary-button" :aria-pressed="favorites.has(item.id, item.type)" @click="favorites.toggle(item.id, item.type)">
+          {{ favorites.has(item.id, item.type) ? '✓ Dans ma liste' : '+ Ajouter à ma liste' }}
         </button>
         <small>Catalogue de démonstration : aucune lecture vidéo disponible.</small>
       </div>

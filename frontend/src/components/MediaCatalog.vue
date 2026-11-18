@@ -36,7 +36,7 @@ const filteredMedia = computed(() => {
     item.title.toLocaleLowerCase('fr').includes(query) &&
     (!props.mixed || type.value === 'all' || item.type === type.value) &&
     (genre.value === 'Tous' || item.genre === genre.value) &&
-    (!props.favoritesOnly || favorites.has(item.id)),
+    (!props.favoritesOnly || favorites.has(item.id, item.type)),
   )
 })
 
@@ -83,13 +83,12 @@ function resetFilters() {
           </RouterLink>
           <span class="rating"><span aria-hidden="true">★</span> {{ item.score }}</span>
           <button
-            v-if="item.type === 'movie'"
             class="favorite-button"
-            :class="{ saved: favorites.has(item.id) }"
-            :aria-label="favorites.has(item.id) ? `Retirer ${item.title} de ma liste` : `Ajouter ${item.title} à ma liste`"
-            :aria-pressed="favorites.has(item.id)"
-            @click="favorites.toggle(item.id)"
-          >{{ favorites.has(item.id) ? '✓' : '+' }}</button>
+            :class="{ saved: favorites.has(item.id, item.type) }"
+            :aria-label="favorites.has(item.id, item.type) ? `Retirer ${item.title} de ma liste` : `Ajouter ${item.title} à ma liste`"
+            :aria-pressed="favorites.has(item.id, item.type)"
+            @click="favorites.toggle(item.id, item.type)"
+          >{{ favorites.has(item.id, item.type) ? '✓' : '+' }}</button>
         </div>
         <h3><RouterLink :to="detailLocation(item)">{{ item.title }}</RouterLink></h3>
         <p class="movie-meta">{{ item.year }}<span>•</span>{{ item.genre }}</p>
@@ -98,7 +97,7 @@ function resetFilters() {
     <div v-else class="empty-state">
       <template v-if="favoritesOnly && !favorites.ids.length">
         <h3>Votre prochaine séance commence ici.</h3>
-        <p>Ajoutez des films à votre liste avec le bouton + sur les affiches.</p>
+        <p>Ajoutez des films et des séries à votre liste avec le bouton + sur les affiches.</p>
         <RouterLink class="secondary-button" :to="{ name: 'films' }">Voir tous les films</RouterLink>
       </template>
       <template v-else>

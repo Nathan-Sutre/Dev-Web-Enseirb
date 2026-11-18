@@ -97,6 +97,24 @@ describe('navigation SeenFlix', () => {
     expect(wrapper.get('main a[href="/films"]').text()).toBe('Voir tous les films')
   })
 
+  it('filtre les films et les séries favoris qui partagent un identifiant', async () => {
+    const { router, wrapper } = await openPage('/home')
+    await wrapper.get('button[aria-label="Ajouter Interstellar à ma liste"]').trigger('click')
+    await follow(wrapper.get('.movie-card h3 a[href="/series/1"]'))
+    await wrapper.get('main button[aria-pressed="false"]').trigger('click')
+    await follow(wrapper.get('nav a[href="/favorite"]'))
+    expect(router.currentRoute.value.path).toBe('/favorite')
+    expect(wrapper.findAll('.movie-card h3 a').map((link) => link.text())).toEqual(['Interstellar', 'Breaking Bad'])
+
+    const types = wrapper.findAll('[aria-label="Type de contenu"] button')
+    await types.find((button) => button.text() === 'Série').trigger('click')
+    expect(wrapper.findAll('.movie-card h3 a').map((link) => link.text())).toEqual(['Breaking Bad'])
+    await wrapper.get('button[aria-label="Retirer Breaking Bad de ma liste"]').trigger('click')
+    expect(wrapper.find('.movie-card').exists()).toBe(false)
+    await types.find((button) => button.text() === 'Film').trigger('click')
+    expect(wrapper.findAll('.movie-card h3 a').map((link) => link.text())).toEqual(['Interstellar'])
+  })
+
   it('affiche une fiche de série en accès direct et signale un identifiant inconnu', async () => {
     const { router, wrapper } = await openPage('/series/1')
     expect(wrapper.get('main h1').text()).toBe('Breaking Bad')
