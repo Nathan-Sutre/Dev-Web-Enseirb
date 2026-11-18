@@ -1,6 +1,8 @@
 <script setup>
 defineProps({
   genres: { type: Array, required: true },
+  searchLabel: { type: String, default: 'Rechercher un titre' },
+  showTypeFilter: { type: Boolean, default: true },
 })
 
 const search = defineModel('search', { type: String, required: true })
@@ -19,12 +21,12 @@ const types = [
     <slot name="heading"></slot>
     <label class="search">
       <span aria-hidden="true">⌕</span>
-      <input v-model="search" type="search" placeholder="Rechercher un titre…" aria-label="Rechercher un titre">
+      <input v-model="search" type="search" :placeholder="`${searchLabel}…`" :aria-label="searchLabel">
     </label>
   </div>
   <div class="catalog-toolbar">
     <div class="filter-groups">
-      <div class="filter-options" role="group" aria-label="Type de contenu">
+      <div v-if="showTypeFilter" class="filter-options" role="group" aria-label="Type de contenu">
         <button
           v-for="item in types"
           :key="item.value"

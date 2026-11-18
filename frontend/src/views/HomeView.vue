@@ -30,5 +30,5 @@ const favorites = useFavoritesStore()
     <div class="hero-label"><span>À L’AFFICHE</span><strong>{{ featured.title }}</strong><small>Un film de Christopher Nolan</small></div>
   </section>
 
-  <MediaCatalog featured title="À découvrir" />
+  <MediaCatalog featured mixed title="À découvrir" />
 </template>

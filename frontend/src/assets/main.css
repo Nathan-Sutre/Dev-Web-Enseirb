@@ -300,68 +300,6 @@ h2 > span {
   color: #d8f378;
 }
 
-.search {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  background: #1b1d22;
-  border: 1px solid #2b2d33;
-  border-radius: 8px;
-  padding: 10px 14px;
-  width: 270px;
-}
-
-.search > span {
-  font-size: 25px;
-  color: #91959d;
-  line-height: 1;
-}
-
-.search input {
-  background: none;
-  border: 0;
-  min-width: 0;
-  width: 100%;
-  color: #fff;
-  font-size: 12px;
-}
-
-.catalog-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin: 28px 0;
-}
-
-.genre-filters {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.genre-filters button {
-  background: transparent;
-  border: 1px solid #303238;
-  border-radius: 6px;
-  padding: 8px 15px;
-  color: #a4a7ae;
-  font-size: 11px;
-}
-
-.genre-filters button.selected {
-  background: #d8f378;
-  color: #171c0b;
-  border-color: #d8f378;
-  font-weight: 650;
-}
-
-.results-count {
-  font-size: 11px;
-  color: #777c85;
-  white-space: nowrap;
-}
-
 /* Grille et cartes du catalogue */
 .movie-grid {
   display: grid;
