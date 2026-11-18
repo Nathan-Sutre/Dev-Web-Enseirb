@@ -26,7 +26,28 @@ async function follow(link) {
 }
 
 describe('navigation SeenFlix', () => {
-  it('connecte, ouvre Profil et Mes avis, puis déconnecte depuis le menu', async () => {
+  it('combine les filtres du catalogue Découvrir et ouvre la bonne fiche de série', async () => {
+    const { router, wrapper } = await openPage('/home')
+    expect(wrapper.get('.movie-card h3 a[href="/films/1"]').text()).toBe('Interstellar')
+    expect(wrapper.get('.movie-card h3 a[href="/series/1"]').text()).toBe('Breaking Bad')
+
+    const buttons = wrapper.findAll('.catalog-toolbar button')
+    await buttons.find((button) => button.text() === 'Série').trigger('click')
+    await buttons.find((button) => button.text() === 'Science-fiction').trigger('click')
+    expect(wrapper.findAll('.movie-card h3 a').map((link) => link.text())).toEqual(['Stranger Things'])
+
+    const search = wrapper.get('.catalog input[type="search"]')
+    await search.setValue('Interstellar')
+    expect(wrapper.find('.movie-card').exists()).toBe(false)
+    await wrapper.get('.empty-state button').trigger('click')
+    expect(search.element.value).toBe('')
+    expect(wrapper.find('.movie-card h3 a[href="/films/1"]').exists()).toBe(true)
+
+    await follow(wrapper.get('.movie-card h3 a[href="/series/1"]'))
+    expect(router.currentRoute.value.path).toBe('/series/1')
+  })
+
+  it('ouvre le formulaire de connexion en gardant une seule barre de navigation', async () => {
     const { router, wrapper } = await openPage('/home')
     expect(wrapper.get('.auth-buttons button[disabled]').text()).toBe("S'inscrire")
     expect(wrapper.find('.account-toggle').exists()).toBe(false)

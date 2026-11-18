@@ -66,6 +66,14 @@ button:hover {
 .site-shell {
   max-width: 1800px;
   margin: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-shell > main {
+  flex: 1;
 }
 
 .site-header {
@@ -272,13 +280,6 @@ h1 {
   padding: 48px 5% 65px;
 }
 
-.catalog-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
 .catalog-heading .eyebrow {
   margin-bottom: 10px;
   font-size: 9px;
@@ -293,68 +294,6 @@ h2 {
 
 h2 > span {
   color: #d8f378;
-}
-
-.search {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  background: #1b1d22;
-  border: 1px solid #2b2d33;
-  border-radius: 8px;
-  padding: 10px 14px;
-  width: 270px;
-}
-
-.search > span {
-  font-size: 25px;
-  color: #91959d;
-  line-height: 1;
-}
-
-.search input {
-  background: none;
-  border: 0;
-  min-width: 0;
-  width: 100%;
-  color: #fff;
-  font-size: 12px;
-}
-
-.catalog-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin: 28px 0;
-}
-
-.genre-filters {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.genre-filters button {
-  background: transparent;
-  border: 1px solid #303238;
-  border-radius: 6px;
-  padding: 8px 15px;
-  color: #a4a7ae;
-  font-size: 11px;
-}
-
-.genre-filters button.selected {
-  background: #d8f378;
-  color: #171c0b;
-  border-color: #d8f378;
-  font-weight: 650;
-}
-
-.results-count {
-  font-size: 11px;
-  color: #777c85;
-  white-space: nowrap;
 }
 
 /* Grille et cartes du catalogue */
@@ -481,30 +420,6 @@ h3 {
   margin-bottom: 24px;
 }
 
-/* Pied de page */
-footer {
-  border-top: 1px solid #26282e;
-  margin: 0 5%;
-  padding: 25px 0;
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
-footer .brand {
-  font-size: 22px;
-}
-
-footer p,
-footer > span {
-  font-size: 10px;
-  color: #777c85;
-}
-
-footer > span {
-  margin-left: auto;
-}
-
 /* Adaptation aux tailles d'ecran */
 @media (min-width: 1400px) {
   .movie-grid {
@@ -548,46 +463,11 @@ footer > span {
     padding-top: 35px;
   }
 
-  .catalog-heading {
-    align-items: start;
-    flex-direction: column;
-  }
-
-  .search {
-    width: 100%;
-    margin-top: 4px;
-  }
-
-  .catalog-toolbar {
-    align-items: start;
-  }
-
-  .genre-filters {
-    gap: 7px;
-  }
-
-  .genre-filters button {
-    padding: 8px 10px;
-  }
-
-  .results-count {
-    padding-top: 9px;
-  }
-
   .movie-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px 14px;
   }
 
-  footer {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  footer>span {
-    margin: 0;
-    width: 100%;
-  }
 }
 
 @media (max-width: 480px) {
