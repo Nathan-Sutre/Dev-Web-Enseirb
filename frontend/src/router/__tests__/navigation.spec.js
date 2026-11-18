@@ -101,7 +101,7 @@ describe('navigation SeenFlix', () => {
   it('redirige la racine vers l’accueil et ouvre la fiche du film en vedette', async () => {
     const { router, wrapper } = await openPage('/')
     expect(router.currentRoute.value.path).toBe('/home')
-    expect(wrapper.get('nav a[aria-current="page"]').text()).toBe('Accueil')
+    expect(wrapper.get('nav a[aria-current="page"]').text()).toBe('Découvrir')
 
     await follow(wrapper.get('.hero a[href="/films/1"]'))
     expect(router.currentRoute.value.path).toBe('/films/1')
