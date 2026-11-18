@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
 
 const inscription = ref(false)
 const email = ref('')
@@ -21,57 +20,46 @@ function envoyer() {
 </script>
 
 <template>
-  <div class="site-shell">
-    <header class="site-header auth-header">
-      <RouterLink class="brand" to="/" aria-label="SeenFlix, accueil">seen<span>flix</span>.</RouterLink>
-      <RouterLink class="back-link" to="/">← Retour au catalogue</RouterLink>
-    </header>
+  <div class="auth-layout">
+    <section class="auth-intro">
+      <p class="eyebrow">VOTRE PROCHAINE SÉANCE COMMENCE ICI</p>
+      <h1>De grandes histoires.<br>Un espace à vous<span>.</span></h1>
+      <p>Retrouvez vos films préférés et gardez vos prochaines découvertes à portée de main.</p>
+      <span class="auth-signature">LE CINÉMA, TOUT SIMPLEMENT.</span>
+    </section>
 
-    <main class="auth-layout">
-      <section class="auth-intro">
-        <p class="eyebrow">VOTRE PROCHAINE SÉANCE COMMENCE ICI</p>
-        <h1>De grandes histoires.<br>Un espace à vous<span>.</span></h1>
-        <p>Retrouvez vos films préférés et gardez vos prochaines découvertes à portée de main.</p>
-        <span class="auth-signature">LE CINÉMA, TOUT SIMPLEMENT.</span>
-      </section>
+    <section class="auth-panel" aria-labelledby="auth-title">
+      <p class="eyebrow">BIENVENUE SUR SEENFLIX</p>
+      <h2 id="auth-title">{{ inscription ? 'Créer un compte' : 'Heureux de vous revoir' }}<span>.</span></h2>
+      <p class="auth-subtitle">{{ inscription ? 'Vos prochaines découvertes vous attendent.' : 'Connectez-vous pour retrouver votre liste.' }}</p>
 
-      <section class="auth-panel" aria-labelledby="auth-title">
-        <p class="eyebrow">BIENVENUE SUR SEENFLIX</p>
-        <h2 id="auth-title">{{ inscription ? 'Créer un compte' : 'Heureux de vous revoir' }}<span>.</span></h2>
-        <p class="auth-subtitle">{{ inscription ? 'Vos prochaines découvertes vous attendent.' : 'Connectez-vous pour retrouver votre liste.' }}</p>
+      <form @submit.prevent="envoyer">
+        <label for="email">Adresse e-mail</label>
+        <input id="email" v-model="email" type="email" name="email" autocomplete="email" placeholder="vous@exemple.fr" required>
 
-        <form @submit.prevent="envoyer">
-          <label for="email">Adresse e-mail</label>
-          <input id="email" v-model="email" type="email" name="email" autocomplete="email" placeholder="vous@exemple.fr" required>
+        <label for="password">Mot de passe</label>
+        <input id="password" v-model="password" type="password" name="password" :autocomplete="inscription ? 'new-password' : 'current-password'" :minlength="inscription ? 8 : undefined" :aria-describedby="inscription ? 'password-help' : undefined" placeholder="Votre mot de passe" required>
+        <small v-if="inscription" id="password-help">8 caractères minimum.</small>
 
-          <label for="password">Mot de passe</label>
-          <input id="password" v-model="password" type="password" name="password" :autocomplete="inscription ? 'new-password' : 'current-password'" :minlength="inscription ? 8 : undefined" :aria-describedby="inscription ? 'password-help' : undefined" placeholder="Votre mot de passe" required>
-          <small v-if="inscription" id="password-help">8 caractères minimum.</small>
+        <button class="primary-button" type="submit">{{ inscription ? 'Créer mon compte' : 'Se connecter' }} <span aria-hidden="true">→</span></button>
+        <p v-if="message" class="auth-message" role="status">{{ message }}</p>
+      </form>
 
-          <button class="primary-button" type="submit">{{ inscription ? 'Créer mon compte' : 'Se connecter' }} <span aria-hidden="true">→</span></button>
-          <p v-if="message" class="auth-message" role="status">{{ message }}</p>
-        </form>
-
-        <p class="auth-switch">
-          {{ inscription ? 'Déjà un compte ?' : 'Pas encore de compte ?' }}
-          <button type="button" @click="changerMode">{{ inscription ? 'Se connecter' : 'S’inscrire' }}</button>
-        </p>
-      </section>
-    </main>
+      <p class="auth-switch">
+        {{ inscription ? 'Déjà un compte ?' : 'Pas encore de compte ?' }}
+        <button type="button" @click="changerMode">{{ inscription ? 'Se connecter' : 'S’inscrire' }}</button>
+      </p>
+    </section>
   </div>
 </template>
 
 <style scoped>
-.auth-header {
-  justify-content: space-between;
-}
-
-.back-link, .auth-subtitle, .auth-switch {
+.auth-subtitle, .auth-switch {
   color: #a3a6ae;
   font-size: 13px;
 }
 
-.back-link:hover, .auth-switch button {
+.auth-switch button {
   color: #d8f378;
 }
 
@@ -202,10 +190,6 @@ form .primary-button {
 
   .auth-panel {
     padding: 35px 24px;
-  }
-
-  .back-link {
-    font-size: 11px;
   }
 }
 </style>

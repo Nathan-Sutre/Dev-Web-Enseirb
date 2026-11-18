@@ -31,6 +31,27 @@ npm install
 npm run dev
 ```
 
+### Navigation SeenFlix
+
+La barre de navigation est définie dans [NavBar.vue](./src/components/NavBar.vue)
+et reste visible sur toutes les pages grâce à [App.vue](./src/App.vue).
+
+| URL | Page |
+| --- | --- |
+| `/` ou `/home` | Accueil (`/` redirige vers `/home`) |
+| `/films` | Catalogue des films |
+| `/films/:id` | Fiche d’un film, par exemple `/films/1` |
+| `/series` | Catalogue des séries |
+| `/series/:id` | Fiche d’une série, par exemple `/series/1` |
+| `/favorite` | Films favoris ; chaque film ouvre sa fiche `/films/:id` |
+| `/profile` | Profil de démonstration, sans compte utilisateur |
+| `/connexion` | Formulaire de connexion et d’inscription de démonstration |
+
+Ce sont des routes Vue Router, pas des endpoints d’API. Le catalogue est une
+démonstration et les favoris restent en mémoire pendant la navigation, jusqu’au
+rechargement de la page. En production, configurez l’hébergement pour servir
+`index.html` sur ces URL afin qu’elles fonctionnent aussi en accès direct.
+
 ### Compile and Minify for Production
 
 ```sh

@@ -1,28 +1,46 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import MediaCatalog from '../components/MediaCatalog.vue'
+import MediaDetailView from '../views/MediaDetailView.vue'
+import ProfileView from '../views/ProfileView.vue'
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView,
+export function createAppRouter(history = createWebHistory(import.meta.env.BASE_URL)) {
+  return createRouter({
+    history,
+    scrollBehavior(to, from, savedPosition) {
+      return savedPosition ?? { top: 0 }
     },
-    {
-      path: '/connexion',
-      name: 'connexion',
-      component: () => import('../views/AuthView.vue'),
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
-    },
-  ],
-})
+    routes: [
+      { path: '/', redirect: { name: 'home' } },
+      { path: '/home', name: 'home', component: HomeView },
+      {
+        path: '/films',
+        children: [
+          { path: '', name: 'films', component: MediaCatalog, props: { title: 'Films' } },
+          { path: ':id', name: 'film-detail', component: MediaDetailView, props: true },
+        ],
+      },
+      {
+        path: '/series',
+        children: [
+          { path: '', name: 'series', component: MediaCatalog, props: { title: 'Séries', isSeries: true } },
+          { path: ':id', name: 'serie-detail', component: MediaDetailView, props: (route) => ({ id: route.params.id, isSeries: true }) },
+        ],
+      },
+      {
+        path: '/favorite',
+        name: 'favorite',
+        component: MediaCatalog,
+        props: { title: 'Ma liste de films', favoritesOnly: true },
+      },
+      { path: '/profile', name: 'profile', component: ProfileView },
+      {
+        path: '/connexion',
+        name: 'connexion',
+        component: () => import('../views/AuthView.vue'),
+      },
+    ],
+  })
+}
 
-export default router
+export default createAppRouter()

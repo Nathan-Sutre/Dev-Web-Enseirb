@@ -62,7 +62,7 @@ button:hover {
   filter: brightness(1.12);
 }
 
-/* En-tête et navigation */
+/* En-tete et navigation */
 .site-shell {
   max-width: 1800px;
   margin: auto;
@@ -97,8 +97,10 @@ button:hover {
   align-items: center;
 }
 
-.site-header nav button {
+.site-header nav a {
   height: 100%;
+  display: flex;
+  align-items: center;
   position: relative;
   background: none;
   color: #96999f;
@@ -106,11 +108,11 @@ button:hover {
   font-weight: 600;
 }
 
-.site-header nav button.active {
+.site-header nav a.router-link-active {
   color: #fff;
 }
 
-.site-header nav button.active:after {
+.site-header nav a.router-link-active:after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -144,7 +146,7 @@ button:hover {
   border: 1px solid #525c43;
 }
 
-/* Film à la une */
+/* Bandeau d'accueil */
 .hero {
   min-height: 490px;
   margin: 0 2%;
@@ -156,7 +158,7 @@ button:hover {
   background:
     linear-gradient(90deg, rgba(10, 14, 18, .95) 0%, rgba(10, 14, 18, .65) 48%, rgba(10, 14, 18, .08)),
     linear-gradient(0deg, rgba(10, 14, 18, .6), transparent 50%),
-    url('https://image.tmdb.org/t/p/original/xJHokMbljvjADYdit5fK5VQsXEG.jpg') center 45%/cover;
+    url('https://image.tmdb.org/t/p/original/xJHokMbljvjADYdit5fK5VQsXEG.jpg') center 45% / cover;
 }
 
 .hero-content {
@@ -277,7 +279,7 @@ h1 {
   color: #b5b8be;
 }
 
-/* Catalogue et filtres */
+/* Catalogue : recherche et filtres */
 .catalog {
   padding: 48px 5% 65px;
 }
@@ -298,7 +300,69 @@ h2 > span {
   color: #d8f378;
 }
 
-/* Cartes de films */
+.search {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: #1b1d22;
+  border: 1px solid #2b2d33;
+  border-radius: 8px;
+  padding: 10px 14px;
+  width: 270px;
+}
+
+.search > span {
+  font-size: 25px;
+  color: #91959d;
+  line-height: 1;
+}
+
+.search input {
+  background: none;
+  border: 0;
+  min-width: 0;
+  width: 100%;
+  color: #fff;
+  font-size: 12px;
+}
+
+.catalog-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 28px 0;
+}
+
+.genre-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.genre-filters button {
+  background: transparent;
+  border: 1px solid #303238;
+  border-radius: 6px;
+  padding: 8px 15px;
+  color: #a4a7ae;
+  font-size: 11px;
+}
+
+.genre-filters button.selected {
+  background: #d8f378;
+  color: #171c0b;
+  border-color: #d8f378;
+  font-weight: 650;
+}
+
+.results-count {
+  font-size: 11px;
+  color: #777c85;
+  white-space: nowrap;
+}
+
+/* Grille et cartes du catalogue */
 .movie-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -390,12 +454,8 @@ h3 {
   margin: 13px 0 7px;
 }
 
-h3 button {
-  background: none;
-  text-align: left;
-  padding: 0;
-  font-weight: inherit;
-  line-height: 1.4;
+.movie-card h3 a:hover {
+  text-decoration: underline;
 }
 
 .movie-meta {
@@ -410,7 +470,6 @@ h3 button {
   color: #4c5058;
 }
 
-/* Catalogue vide */
 .empty-state {
   padding: 60px 15px;
   text-align: center;
@@ -451,80 +510,14 @@ footer > span {
   margin-left: auto;
 }
 
-/* Fiche de film */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: #000c;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  backdrop-filter: blur(8px);
-}
-
-.movie-modal {
-  position: relative;
-  display: flex;
-  background: #1b1d22;
-  border: 1px solid #393c43;
-  border-radius: 14px;
-  overflow: auto;
-  max-width: 760px;
-  width: 100%;
-  max-height: 90vh;
-}
-
-.movie-modal > img {
-  width: 38%;
-  object-fit: cover;
-}
-
-.modal-content {
-  padding: 42px 30px;
-  align-self: center;
-}
-
-.modal-content h2 {
-  margin-bottom: 18px;
-}
-
-.modal-description {
-  font-size: 14px;
-  line-height: 1.8;
-  color: #b5b8be;
-  margin: 22px 0;
-}
-
-.modal-content small {
-  display: block;
-  font-size: 11px;
-  color: #92969f;
-  margin-top: 20px;
-  line-height: 1.5;
-}
-
-.close-button {
-  position: absolute;
-  right: 12px;
-  top: 10px;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  background: #101114;
-  color: #fff;
-  font-size: 24px;
-}
-
-/* Adaptation aux tailles d’écran */
+/* Adaptation aux tailles d'ecran */
 @media (min-width: 1400px) {
   .movie-grid {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 960px) {
   .site-header {
     height: 75px;
     gap: 24px;
@@ -541,7 +534,9 @@ footer > span {
   .avatar {
     margin-left: auto;
   }
+}
 
+@media (max-width: 760px) {
   .hero {
     min-height: 450px;
   }
@@ -572,17 +567,9 @@ footer > span {
     gap: 12px;
   }
 
-  footer > span {
+  footer>span {
     margin: 0;
     width: 100%;
-  }
-
-  .movie-modal > img {
-    display: none;
-  }
-
-  .modal-content {
-    padding: 40px 25px;
   }
 }
 
@@ -592,15 +579,22 @@ footer > span {
   }
 
   .site-header {
-    gap: 20px;
+    height: auto;
+    flex-direction: column;
+    gap: 8px;
+    padding-block: 12px;
   }
 
-  .site-header nav button {
+  .site-header nav a {
     font-size: 12px;
+    padding-block: 8px;
   }
 
   .site-header nav {
-    gap: 16px;
+    height: auto;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px 12px;
   }
 
   .avatar {
@@ -643,14 +637,10 @@ footer > span {
   .hero {
     background-position: 60% center;
   }
-
-  .modal-backdrop {
-    padding: 16px;
-  }
 }
 
-/* Réduction des animations */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
