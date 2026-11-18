@@ -48,7 +48,7 @@ function showCatalog(favoritesOnly = false) {
     </header>
 
     <main>
-      <section class="hero" aria-labelledby="hero-title">
+      <section v-if="!onlyFavorites" class="hero" aria-labelledby="hero-title">
         <div class="hero-content">
           <p class="eyebrow"><span></span> LA SÉLECTION SEENFLIX</p>
           <h1 id="hero-title">Au-delà des étoiles.<br>Au cœur du cinéma.</h1>
