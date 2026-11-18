@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Base de données de films et séries",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "node node_modules/nodemon/bin/nodemon.js index.js",
     "start": "node index.js",

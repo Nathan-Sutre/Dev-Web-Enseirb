@@ -1,0 +1,122 @@
+openapi: 3.0.0
+info:
+  title: SeenFlix
+  version: 1.0.0
+  description: API REST pour une base de données de films et séries
+
+paths:
+  /:
+    get:
+      summary: Vérifier que le serveur répond
+      responses:
+        '200':
+          description: Succès
+  
+  /auth/register:
+    post:
+      summary: Inscription d'un nouvel utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Inscription réalisée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterRequest'
+        '400':
+          description: Données invalides
+        '409':
+          description: Adresse mail déjà utilisée
+  /auth/login:
+    post:
+      summary: Authentification d'un utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Utilisateur authentifié
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        '400':
+          description: Requête invalide
+        '401':
+          description: Identifiants invalides
+  /auth/refresh:
+    post:
+      summary: Renouvellement de l'access token
+      parameters:
+        - name: X-Refresh-Token
+          in: header
+          required: true
+          description: Refresh token
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Token renouvelé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Refresh token invalide ou expiré
+
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          minLength: 8
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: password
+        password:
+          type: string
+          format: password
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        createdAt:
+          type: string
+          format: date-time
+    TokenResponse:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
