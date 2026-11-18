@@ -46,7 +46,6 @@ function logout() {
         Favoris <span v-if="favorites.ids.length" class="count">{{ favorites.ids.length }}</span>
       </RouterLink>
     </nav>
-    <span class="header-caption">Le cinéma, tout simplement.</span>
     <div class="auth-buttons">
       <template v-if="!auth.isLoggedIn">
         <button class="auth-button signup-button" type="button" disabled title="Inscription bientôt disponible">S'inscrire</button>
