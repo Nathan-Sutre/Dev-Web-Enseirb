@@ -1,6 +1,7 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import NavBar from './components/NavBar.vue'
+import SiteFooter from './components/SiteFooter.vue'
 </script>
 
 <template>
@@ -13,10 +14,6 @@ import NavBar from './components/NavBar.vue'
       </RouterView>
     </main>
 
-    <footer>
-      <RouterLink class="brand" :to="{ name: 'home' }">seen<span>flix</span>.</RouterLink>
-      <p>De grandes histoires, à portée d’écran.</p>
-      <span>Catalogue de démonstration · Affiches TMDB</span>
-    </footer>
+    <SiteFooter />
   </div>
 </template>
