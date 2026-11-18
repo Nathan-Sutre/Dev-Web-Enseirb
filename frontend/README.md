@@ -45,6 +45,7 @@ et reste visible sur toutes les pages grâce à [App.vue](./src/App.vue).
 | `/series/:id` | Fiche d’une série, par exemple `/series/1` |
 | `/favorite` | Films favoris ; chaque film ouvre sa fiche `/films/:id` |
 | `/profile` | Profil de démonstration, sans compte utilisateur |
+| `/connexion` | Formulaire de connexion et d’inscription de démonstration |
 
 Ce sont des routes Vue Router, pas des endpoints d’API. Le catalogue est une
 démonstration et les favoris restent en mémoire pendant la navigation, jusqu’au

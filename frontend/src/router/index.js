@@ -35,9 +35,9 @@ export function createAppRouter(history = createWebHistory(import.meta.env.BASE_
       },
       { path: '/profile', name: 'profile', component: ProfileView },
       {
-        path: '/about',
-        name: 'about',
-        component: () => import('../views/AboutView.vue'),
+        path: '/connexion',
+        name: 'connexion',
+        component: () => import('../views/AuthView.vue'),
       },
     ],
   })

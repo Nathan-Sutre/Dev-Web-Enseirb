@@ -24,6 +24,21 @@ async function follow(link) {
 }
 
 describe('navigation SeenFlix', () => {
+  it('ouvre le formulaire de connexion en gardant une seule barre de navigation', async () => {
+    const { router, wrapper } = await openPage('/home')
+    expect(wrapper.findAll('header')).toHaveLength(1)
+
+    await follow(wrapper.get('nav a[href="/connexion"]'))
+    await vi.waitFor(() => expect(router.currentRoute.value.path).toBe('/connexion'))
+    await flushPromises()
+
+    expect(wrapper.findAll('header')).toHaveLength(1)
+    expect(wrapper.findAll('main')).toHaveLength(1)
+    expect(wrapper.get('main form input[type="email"]').exists()).toBe(true)
+    await wrapper.get('.auth-switch button').trigger('click')
+    expect(wrapper.get('#auth-title').text()).toBe('Créer un compte.')
+  })
+
   it('ouvre le profil de démonstration depuis la barre de navigation', async () => {
     const { router, wrapper } = await openPage('/home')
 

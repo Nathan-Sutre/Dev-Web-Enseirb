@@ -15,6 +15,8 @@ const favorites = useFavoritesStore()
       <RouterLink :to="{ name: 'favorite' }">
         Favoris <span v-if="favorites.ids.length" class="count">{{ favorites.ids.length }}</span>
       </RouterLink>
+      <RouterLink :to="{ name: 'profile' }">Profil</RouterLink>
+      <RouterLink :to="{ name: 'connexion' }">Connexion</RouterLink>
     </nav>
     <span class="header-caption">Le cinéma, tout simplement.</span>
     <div class="avatar" aria-label="Profil de démonstration">S</div>
