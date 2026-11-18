@@ -39,7 +39,7 @@ function logout() {
   <header class="site-header">
     <RouterLink class="brand" :to="{ name: 'home' }" aria-label="SeenFlix, accueil">seen<span>flix</span><span class="brand-dot">.</span></RouterLink>
     <nav aria-label="Navigation principale">
-      <RouterLink :to="{ name: 'home' }">Accueil</RouterLink>
+      <RouterLink :to="{ name: 'home' }">Découvrir</RouterLink>
       <RouterLink :to="{ name: 'films' }">Films</RouterLink>
       <RouterLink :to="{ name: 'series' }">Séries</RouterLink>
       <RouterLink :to="{ name: 'favorite' }">
