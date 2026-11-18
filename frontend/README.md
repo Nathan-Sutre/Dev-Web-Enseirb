@@ -69,3 +69,6 @@ npm run build
 ```sh
 npm run test:unit
 ```
+
+
+On veut dans "A decouvrir", ne pas avoir de filtres. Par contre dans series et films, on veut avoir une grande barre de recherche avec une icone de filtres. SI on clique dessus, on a des filtres avancés (année, genre, films/series, notes etc...)
