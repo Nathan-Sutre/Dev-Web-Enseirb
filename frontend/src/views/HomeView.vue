@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
+import { RouterLink } from 'vue-router'
 
 const movies = [
   { id: 1, title: 'Interstellar', year: 2014, genre: 'Science-fiction', duration: '2 h 49', score: '8.7', poster: 'gEU2QniE6E77NI6lCU6MxlNBvIx.jpg', description: 'Alors que la Terre devient inhabitable, une équipe d’explorateurs traverse un trou de ver à la recherche d’un nouvel avenir pour l’humanité.' },
@@ -43,7 +44,7 @@ function showCatalog(favoritesOnly = false) {
         <button :class="{ active: onlyFavorites }" @click="showCatalog(true)">Ma liste <span v-if="favorites.length" class="count">{{ favorites.length }}</span></button>
       </nav>
       <span class="header-caption">Le cinéma, tout simplement.</span>
-      <div class="avatar" aria-label="Profil de démonstration">S</div>
+      <RouterLink class="secondary-button" to="/connexion">Connexion</RouterLink>
     </header>
 
     <main>
