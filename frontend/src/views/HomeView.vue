@@ -1,25 +1,28 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import CatalogFilters from '@/components/CatalogFilters.vue'
 
 const movies = [
-  { id: 1, title: 'Interstellar', year: 2014, genre: 'Science-fiction', duration: '2 h 49', score: '8.7', poster: 'gEU2QniE6E77NI6lCU6MxlNBvIx.jpg', description: 'Alors que la Terre devient inhabitable, une équipe d’explorateurs traverse un trou de ver à la recherche d’un nouvel avenir pour l’humanité.' },
-  { id: 2, title: 'Dune : Deuxième Partie', year: 2024, genre: 'Science-fiction', duration: '2 h 46', score: '8.5', poster: '1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg', description: 'Paul Atréides s’unit à Chani et aux Fremen pour mener la révolte sur Arrakis et affronter son destin.' },
-  { id: 3, title: 'The Batman', year: 2022, genre: 'Action', duration: '2 h 56', score: '7.8', poster: '74xTEgt7R36Fpooo50r9T25onhq.jpg', description: 'Dans les rues de Gotham, Batman suit les indices d’un mystérieux tueur qui s’attaque aux élites de la ville.' },
-  { id: 4, title: 'La La Land', year: 2016, genre: 'Romance', duration: '2 h 08', score: '8.0', poster: 'uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg', description: 'À Los Angeles, une actrice et un pianiste de jazz partagent leurs rêves, leurs ambitions et une histoire d’amour.' },
-  { id: 5, title: 'Inception', year: 2010, genre: 'Science-fiction', duration: '2 h 28', score: '8.8', poster: 'oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg', description: 'Un spécialiste de l’extraction des rêves accepte une dernière mission : implanter une idée dans l’esprit d’un homme.' },
-  { id: 6, title: 'The Grand Budapest Hotel', year: 2014, genre: 'Comédie', duration: '1 h 40', score: '8.1', poster: 'eWdyYQreja6JGCzqHWXpWHDrrPo.jpg', description: 'Un concierge légendaire et son jeune protégé se retrouvent au cœur d’une aventure autour d’un tableau et d’un héritage.' },
-  { id: 7, title: 'Oppenheimer', year: 2023, genre: 'Drame', duration: '3 h 00', score: '8.3', poster: 'ptpr0kGAckfQkJeJIt8st5dglvd.jpg', description: 'Le parcours du physicien Robert Oppenheimer, au cœur du projet Manhattan et de ses conséquences.' },
-  { id: 8, title: 'Spider-Man : Across the Spider-Verse', year: 2023, genre: 'Animation', duration: '2 h 20', score: '8.6', poster: '8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg', description: 'Miles Morales traverse le multivers et rencontre une équipe de Spider-héros chargée de protéger son existence.' },
+  { id: 1, type: 'movie', title: 'Interstellar', year: 2014, genre: 'Science-fiction', duration: '2 h 49', score: '8.7', poster: 'gEU2QniE6E77NI6lCU6MxlNBvIx.jpg', description: 'Alors que la Terre devient inhabitable, une équipe d’explorateurs traverse un trou de ver à la recherche d’un nouvel avenir pour l’humanité.' },
+  { id: 2, type: 'movie', title: 'Dune : Deuxième Partie', year: 2024, genre: 'Science-fiction', duration: '2 h 46', score: '8.5', poster: '1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg', description: 'Paul Atréides s’unit à Chani et aux Fremen pour mener la révolte sur Arrakis et affronter son destin.' },
+  { id: 3, type: 'movie', title: 'The Batman', year: 2022, genre: 'Action', duration: '2 h 56', score: '7.8', poster: '74xTEgt7R36Fpooo50r9T25onhq.jpg', description: 'Dans les rues de Gotham, Batman suit les indices d’un mystérieux tueur qui s’attaque aux élites de la ville.' },
+  { id: 4, type: 'movie', title: 'La La Land', year: 2016, genre: 'Romance', duration: '2 h 08', score: '8.0', poster: 'uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg', description: 'À Los Angeles, une actrice et un pianiste de jazz partagent leurs rêves, leurs ambitions et une histoire d’amour.' },
+  { id: 5, type: 'movie', title: 'Inception', year: 2010, genre: 'Science-fiction', duration: '2 h 28', score: '8.8', poster: 'oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg', description: 'Un spécialiste de l’extraction des rêves accepte une dernière mission : implanter une idée dans l’esprit d’un homme.' },
+  { id: 6, type: 'movie', title: 'The Grand Budapest Hotel', year: 2014, genre: 'Comédie', duration: '1 h 40', score: '8.1', poster: 'eWdyYQreja6JGCzqHWXpWHDrrPo.jpg', description: 'Un concierge légendaire et son jeune protégé se retrouvent au cœur d’une aventure autour d’un tableau et d’un héritage.' },
+  { id: 7, type: 'movie', title: 'Oppenheimer', year: 2023, genre: 'Drame', duration: '3 h 00', score: '8.3', poster: 'ptpr0kGAckfQkJeJIt8st5dglvd.jpg', description: 'Le parcours du physicien Robert Oppenheimer, au cœur du projet Manhattan et de ses conséquences.' },
+  { id: 8, type: 'movie', title: 'Spider-Man : Across the Spider-Verse', year: 2023, genre: 'Animation', duration: '2 h 20', score: '8.6', poster: '8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg', description: 'Miles Morales traverse le multivers et rencontre une équipe de Spider-héros chargée de protéger son existence.' },
 ]
 const genres = ['Tous', 'Science-fiction', 'Action', 'Drame', 'Comédie', 'Animation', 'Romance']
 const search = ref('')
 const genre = ref('Tous')
+const type = ref('all')
 const onlyFavorites = ref(false)
 const favorites = ref([])
 const selectedMovie = ref(null)
 const filteredMovies = computed(() => movies.filter(movie =>
   movie.title.toLocaleLowerCase('fr').includes(search.value.trim().toLocaleLowerCase('fr')) &&
+  (type.value === 'all' || movie.type === type.value) &&
   (genre.value === 'Tous' || movie.genre === genre.value) &&
   (!onlyFavorites.value || favorites.value.includes(movie.id)),
 ))
@@ -31,6 +34,7 @@ function toggleFavorite(id) {
 function showCatalog(favoritesOnly = false) {
   onlyFavorites.value = favoritesOnly
   genre.value = 'Tous'
+  type.value = 'all'
   search.value = ''
 }
 </script>
@@ -63,14 +67,17 @@ function showCatalog(favoritesOnly = false) {
       </section>
 
       <section class="catalog" aria-labelledby="catalog-title">
-        <div class="catalog-heading">
-          <div><p class="eyebrow">VOTRE PROCHAINE SÉANCE</p><h2 id="catalog-title">{{ onlyFavorites ? 'Ma liste de films' : 'À découvrir' }}<span>.</span></h2></div>
-          <label class="search"><span aria-hidden="true">⌕</span><input v-model="search" type="search" placeholder="Rechercher un film…" aria-label="Rechercher un film"></label>
-        </div>
-        <div class="catalog-toolbar">
-          <div class="genre-filters" aria-label="Genres"><button v-for="item in genres" :key="item" :class="{ selected: genre === item }" :aria-pressed="genre === item" @click="genre = item">{{ item }}</button></div>
-          <span class="results-count">{{ filteredMovies.length }} film{{ filteredMovies.length > 1 ? 's' : '' }}</span>
-        </div>
+        <CatalogFilters v-model:search="search" v-model:genre="genre" v-model:type="type" :genres="genres">
+          <template #heading>
+            <div>
+              <p class="eyebrow">VOTRE PROCHAINE SÉANCE</p>
+              <h2 id="catalog-title">{{ onlyFavorites ? 'Ma liste' : 'À découvrir' }}<span>.</span></h2>
+            </div>
+          </template>
+          <template #results>
+            {{ filteredMovies.length }} titre{{ filteredMovies.length > 1 ? 's' : '' }}
+          </template>
+        </CatalogFilters>
         <div v-if="filteredMovies.length" class="movie-grid">
           <article v-for="movie in filteredMovies" :key="movie.id" class="movie-card">
             <div class="poster-wrap">
@@ -85,7 +92,7 @@ function showCatalog(favoritesOnly = false) {
             <p class="movie-meta">{{ movie.year }}<span>•</span>{{ movie.genre }}</p>
           </article>
         </div>
-        <div v-else class="empty-state"><h3>{{ onlyFavorites ? 'Votre prochaine séance commence ici.' : 'Aucun film trouvé.' }}</h3><p>{{ onlyFavorites ? 'Ajoutez des films à votre liste avec le bouton + sur les affiches.' : 'Essayez un autre titre ou un autre genre.' }}</p><button class="secondary-button" @click="showCatalog()">Voir tous les films</button></div>
+        <div v-else class="empty-state"><h3>{{ onlyFavorites && !favorites.length ? 'Votre prochaine séance commence ici.' : 'Aucun titre trouvé.' }}</h3><p>{{ onlyFavorites && !favorites.length ? 'Ajoutez des films à votre liste avec le bouton + sur les affiches.' : 'Essayez un autre titre, genre ou type.' }}</p><button class="secondary-button" @click="showCatalog()">Voir tout le catalogue</button></div>
       </section>
     </main>
     <footer><a class="brand" href="#">seen<span>flix</span>.</a><p>De grandes histoires, à portée d’écran.</p><span>Catalogue de démonstration · Affiches TMDB</span></footer>
