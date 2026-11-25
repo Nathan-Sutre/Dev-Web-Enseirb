@@ -4,8 +4,9 @@ import { getMovies, getSeries } from './tmdb.js';
 const router = express.Router();
 
 router.get('/films', async (req, res) => {
+    const { page = '1', q = ''} = req.query;
     try {
-        const films = await getMovies("movie");
+        const films = await getMovies('movie', Number(page), q.trim());
         res.status(200).json(films);
     } catch (error) {
         console.error(error.message);
@@ -14,8 +15,9 @@ router.get('/films', async (req, res) => {
 });
 
 router.get('/series', async (req, res) => {
+    const { page = '1', q = ''} = req.query;
     try {
-        const series = await getSeries("tv");
+        const series = await getSeries('tv', Number(page), q.trim());
         res.status(200).json(series);
     } catch (error) {
         console.error(error.message);

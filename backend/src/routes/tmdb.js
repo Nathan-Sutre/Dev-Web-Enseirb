@@ -1,9 +1,16 @@
 
 import 'dotenv/config';
 
-async function getMovies(type) {
+async function getMovies(type, page = 1, query = '') {
+    const params = new URLSearchParams({ language: 'fr-FR', page: String(page) });
+    const endpoint = query ? 'search/movie' : 'discover/movie';
+
+    if (query) {
+        params.set('query', query);
+    }
+
     const response = await fetch(
-        `https://api.themoviedb.org/3/discover/movie?language=fr-FR`,
+        `https://api.themoviedb.org/3/${endpoint}?${params}`,
         {
             headers: {
                 Authorization: `Bearer ${process.env.TMDB_TOKEN}`,
@@ -20,9 +27,16 @@ async function getMovies(type) {
     return data;
 }
 
-async function getSeries(type) {
+async function getSeries(type, page = 1, query = '') {
+    const params = new URLSearchParams({ language: 'fr-FR', page: String(page) });
+    const endpoint = query ? 'search/tv' : 'discover/tv';
+
+    if (query) {
+        params.set('query', query);
+    }
+
     const response = await fetch(
-        `https://api.themoviedb.org/3/discover/tv?language=fr-FR`,
+        `https://api.themoviedb.org/3/${endpoint}?${params}`,
         {
             headers: {
                 Authorization: `Bearer ${process.env.TMDB_TOKEN}`,
