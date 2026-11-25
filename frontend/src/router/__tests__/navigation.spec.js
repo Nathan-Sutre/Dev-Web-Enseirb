@@ -6,17 +6,49 @@ import App from '../../App.vue'
 import { createAppRouter } from '../index'
 
 enableAutoUnmount(afterEach)
+
+const movie = {
+  id: 1, title: 'Interstellar', release_date: '2014-11-05',
+  genre_ids: [878], vote_average: 8.7, poster_path: '/poster.jpg',
+  overview: 'Une expédition spatiale.',
+}
+const series = [
+  { id: 1, name: 'Breaking Bad', first_air_date: '2008-01-20', genre_ids: [18] },
+  { id: 2, name: 'Stranger Things', first_air_date: '2016-07-15', genre_ids: [10765] },
+]
+
 beforeEach(() => {
   sessionStorage.clear()
   vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
+  vi.stubGlobal('fetch', vi.fn(async (url) => {
+    const path = new URL(url).pathname
+    const data = {
+      '/films': [movie],
+      '/series': series,
+      '/catalog': { movies: [movie], series },
+      '/catalog/random': movie,
+      '/films/1': movie,
+      '/series/1': series[0],
+      '/series/2': series[1],
+    }[path]
+    return {
+      ok: data !== undefined,
+      status: data === undefined ? 404 : 200,
+      json: async () => data,
+    }
+  }))
 })
-afterEach(() => vi.restoreAllMocks())
+afterEach(() => {
+  vi.restoreAllMocks()
+  vi.unstubAllGlobals()
+})
 
 async function openPage(path) {
   const pinia = createPinia()
   const router = createAppRouter(pinia, createMemoryHistory())
   await router.push(path)
   const wrapper = mount(App, { global: { plugins: [pinia, router] } })
+  await flushPromises()
   return { router, wrapper }
 }
 
@@ -26,6 +58,37 @@ async function follow(link) {
 }
 
 describe('navigation SeenFlix', () => {
+  it('signale une erreur du backend au lieu de montrer un catalogue vide', async () => {
+    fetch.mockResolvedValue({ ok: false, status: 502 })
+    const { wrapper } = await openPage('/films')
+    expect(wrapper.get('[role="alert"]').text()).toContain('502')
+    expect(wrapper.find('.empty-state').exists()).toBe(false)
+  })
+
+  it('distingue une erreur réseau sur une fiche d’un titre introuvable', async () => {
+    fetch.mockRejectedValue(new Error('Connexion au backend impossible'))
+    const { wrapper } = await openPage('/films/1')
+    expect(wrapper.get('[role="alert"]').text()).toContain('Connexion au backend impossible')
+    expect(wrapper.find('.empty-state').exists()).toBe(false)
+  })
+
+  it('ne laisse pas une ancienne réponse écraser le catalogue après navigation', async () => {
+    let resolveMovies
+    fetch.mockImplementation((url) => new Promise((resolve) => {
+      if (new URL(url).pathname === '/films') resolveMovies = resolve
+      else resolve({ ok: true, json: async () => series })
+    }))
+    const { router, wrapper } = await openPage('/films')
+    expect(wrapper.get('[role="status"]').text()).toContain('Chargement')
+    await router.push('/series')
+    await flushPromises()
+    resolveMovies({ ok: true, json: async () => [movie] })
+    await flushPromises()
+    expect(wrapper.findAll('.movie-card h3 a').map((link) => link.text())).toEqual([
+      'Breaking Bad', 'Stranger Things',
+    ])
+  })
+
   it('combine les filtres du catalogue Découvrir et ouvre la bonne fiche de série', async () => {
     const { router, wrapper } = await openPage('/home')
     expect(wrapper.get('.movie-card h3 a[href="/films/1"]').text()).toBe('Interstellar')

@@ -1,8 +1,8 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import CatalogFilters from './CatalogFilters.vue'
-import { catalog, movies, series } from '../data/catalog'
+import { getCatalog, getMovies, getSeries } from '../data/catalog'
 import { useFavoritesStore } from '../stores/favorites'
 
 const props = defineProps({
@@ -17,10 +17,25 @@ const favorites = useFavoritesStore()
 const search = ref('')
 const genre = ref('Tous')
 const type = ref('all')
-const media = computed(() => {
-  if (props.mixed) return catalog
-  return props.isSeries ? series : movies
-})
+const media = ref([])
+const loading = ref(true)
+const error = ref('')
+
+watch(() => [props.mixed, props.isSeries], async (_, __, onCleanup) => {
+  let active = true
+  onCleanup(() => { active = false })
+  loading.value = true
+  error.value = ''
+  media.value = []
+  try {
+    const items = await (props.mixed ? getCatalog() : props.isSeries ? getSeries() : getMovies())
+    if (active) media.value = items
+  } catch (cause) {
+    if (active) error.value = cause.message
+  } finally {
+    if (active) loading.value = false
+  }
+}, { immediate: true })
 const genres = computed(() => ['Tous', ...new Set(media.value.map((item) => item.genre))])
 const searchLabel = computed(() => {
   if (props.mixed) return 'Rechercher un titre'
@@ -74,11 +89,14 @@ function resetFilters() {
         {{ filteredMedia.length }} {{ resultLabel }}{{ filteredMedia.length > 1 ? 's' : '' }}
       </template>
     </CatalogFilters>
-    <div v-if="filteredMedia.length" class="movie-grid">
+    <p v-if="loading" role="status">Chargement du catalogue…</p>
+    <p v-else-if="error" role="alert">{{ error }}</p>
+    <div v-else-if="filteredMedia.length" class="movie-grid">
       <article v-for="item in filteredMedia" :key="`${item.type}-${item.id}`" class="movie-card">
         <div class="poster-wrap">
           <RouterLink class="poster-button" :to="detailLocation(item)" :aria-label="`Voir la fiche de ${item.title}`">
-            <img :src="`https://image.tmdb.org/t/p/w500/${item.poster}`" :alt="`Affiche de ${item.title}`" loading="lazy">
+            <img v-if="item.poster" :src="`https://image.tmdb.org/t/p/w500/${item.poster}`" :alt="`Affiche de ${item.title}`" loading="lazy">
+            <span v-else>Affiche indisponible</span>
             <span class="poster-overlay"><span>Découvrir ↗</span></span>
           </RouterLink>
           <span class="rating"><span aria-hidden="true">★</span> {{ item.score }}</span>

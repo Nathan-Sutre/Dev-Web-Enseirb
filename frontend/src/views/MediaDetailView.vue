@@ -1,7 +1,7 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
-import { movies, series } from '../data/catalog'
+import { getMedia } from '../data/catalog'
 import { useFavoritesStore } from '../stores/favorites'
 
 const props = defineProps({
@@ -10,7 +10,25 @@ const props = defineProps({
 })
 
 const favorites = useFavoritesStore()
-const item = computed(() => (props.isSeries ? series : movies).find((entry) => String(entry.id) === props.id))
+const item = ref(null)
+const loading = ref(true)
+const error = ref('')
+
+watch(() => [props.id, props.isSeries], async (_, __, onCleanup) => {
+  let active = true
+  onCleanup(() => { active = false })
+  loading.value = true
+  error.value = ''
+  item.value = null
+  try {
+    const media = await getMedia(props.id, props.isSeries)
+    if (active) item.value = media
+  } catch (cause) {
+    if (active && cause.status !== 404) error.value = cause.message
+  } finally {
+    if (active) loading.value = false
+  }
+}, { immediate: true })
 </script>
 
 <template>
@@ -19,17 +37,19 @@ const item = computed(() => (props.isSeries ? series : movies).find((entry) => S
       {{ isSeries ? '← Toutes les séries' : '← Tous les films' }}
     </RouterLink>
 
-    <div v-if="item" class="media-detail">
-      <img :src="`https://image.tmdb.org/t/p/w500/${item.poster}`" :alt="`Affiche de ${item.title}`">
+    <p v-if="loading" role="status">Chargement de la fiche…</p>
+    <p v-else-if="error" role="alert">{{ error }}</p>
+    <div v-else-if="item" class="media-detail">
+      <img v-if="item.poster" :src="`https://image.tmdb.org/t/p/w500/${item.poster}`" :alt="`Affiche de ${item.title}`">
       <div class="detail-content">
         <p class="eyebrow">{{ isSeries ? 'LA SÉRIE' : 'LE FILM' }}</p>
         <h1 id="detail-title">{{ item.title }}</h1>
-        <p class="movie-meta">{{ item.year }} · {{ item.genre }} · {{ item.duration }} · ★ {{ item.score }}</p>
+        <p class="movie-meta">{{ item.year }} · {{ item.genre }}<template v-if="item.duration"> · {{ item.duration }}</template> · ★ {{ item.score }}</p>
         <p class="detail-description">{{ item.description }}</p>
         <button class="primary-button" :aria-pressed="favorites.has(item.id, item.type)" @click="favorites.toggle(item.id, item.type)">
           {{ favorites.has(item.id, item.type) ? '✓ Dans ma liste' : '+ Ajouter à ma liste' }}
         </button>
-        <small>Catalogue de démonstration : aucune lecture vidéo disponible.</small>
+        <small>Données TMDB : aucune lecture vidéo disponible.</small>
       </div>
     </div>
     <div v-else class="empty-state">

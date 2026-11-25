@@ -1,17 +1,81 @@
-export const movies = [
-  { id: 1, type: 'movie', title: 'Interstellar', year: 2014, genre: 'Science-fiction', duration: '2 h 49', score: '8.7', poster: 'gEU2QniE6E77NI6lCU6MxlNBvIx.jpg', description: 'Alors que la Terre devient inhabitable, une équipe d’explorateurs traverse un trou de ver à la recherche d’un nouvel avenir pour l’humanité.' },
-  { id: 2, type: 'movie', title: 'Dune : Deuxième Partie', year: 2024, genre: 'Science-fiction', duration: '2 h 46', score: '8.5', poster: '1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg', description: 'Paul Atréides s’unit à Chani et aux Fremen pour mener la révolte sur Arrakis et affronter son destin.' },
-  { id: 3, type: 'movie', title: 'The Batman', year: 2022, genre: 'Action', duration: '2 h 56', score: '7.8', poster: '74xTEgt7R36Fpooo50r9T25onhq.jpg', description: 'Dans les rues de Gotham, Batman suit les indices d’un mystérieux tueur qui s’attaque aux élites de la ville.' },
-  { id: 4, type: 'movie', title: 'La La Land', year: 2016, genre: 'Romance', duration: '2 h 08', score: '8.0', poster: 'uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg', description: 'À Los Angeles, une actrice et un pianiste de jazz partagent leurs rêves, leurs ambitions et une histoire d’amour.' },
-  { id: 5, type: 'movie', title: 'Inception', year: 2010, genre: 'Science-fiction', duration: '2 h 28', score: '8.8', poster: 'oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg', description: 'Un spécialiste de l’extraction des rêves accepte une dernière mission : implanter une idée dans l’esprit d’un homme.' },
-  { id: 6, type: 'movie', title: 'The Grand Budapest Hotel', year: 2014, genre: 'Comédie', duration: '1 h 40', score: '8.1', poster: 'eWdyYQreja6JGCzqHWXpWHDrrPo.jpg', description: 'Un concierge légendaire et son jeune protégé se retrouvent au cœur d’une aventure autour d’un tableau et d’un héritage.' },
-  { id: 7, type: 'movie', title: 'Oppenheimer', year: 2023, genre: 'Drame', duration: '3 h 00', score: '8.3', poster: 'ptpr0kGAckfQkJeJIt8st5dglvd.jpg', description: 'Le parcours du physicien Robert Oppenheimer, au cœur du projet Manhattan et de ses conséquences.' },
-  { id: 8, type: 'movie', title: 'Spider-Man : Across the Spider-Verse', year: 2023, genre: 'Animation', duration: '2 h 20', score: '8.6', poster: '8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg', description: 'Miles Morales traverse le multivers et rencontre une équipe de Spider-héros chargée de protéger son existence.' },
-]
+const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '')
 
-export const series = [
-  { id: 1, type: 'series', title: 'Breaking Bad', year: 2008, genre: 'Drame', duration: '5 saisons', score: '8.9', poster: 'ggFHVNu6YYI5L9pCfOacjizRGt.jpg', description: 'Un professeur de chimie apprend qu’il est gravement malade et s’associe à un ancien élève pour mettre sa famille à l’abri du besoin.' },
-  { id: 2, type: 'series', title: 'Stranger Things', year: 2016, genre: 'Science-fiction', duration: '5 saisons', score: '8.6', poster: 'uOOtwVbSr4QDjAGIifLDwpb2Pdl.jpg', description: 'La disparition d’un garçon dans une petite ville de l’Indiana amène ses amis à découvrir des phénomènes surnaturels.' },
-]
+const genres = {
+  12: 'Aventure', 14: 'Fantastique', 16: 'Animation', 18: 'Drame',
+  27: 'Horreur', 28: 'Action', 35: 'Comédie', 36: 'Histoire',
+  37: 'Western', 53: 'Thriller', 80: 'Crime', 99: 'Documentaire',
+  878: 'Science-fiction', 9648: 'Mystère', 10402: 'Musique',
+  10749: 'Romance', 10751: 'Familial', 10752: 'Guerre', 10770: 'Téléfilm',
+  10759: 'Action et aventure', 10762: 'Enfants', 10763: 'Actualités',
+  10764: 'Télé-réalité', 10765: 'Science-fiction', 10766: 'Feuilleton',
+  10767: 'Talk-show', 10768: 'Guerre et politique',
+}
 
-export const catalog = [...movies, ...series]
+async function request(path) {
+  const response = await fetch(`${apiUrl}${path}`)
+  if (!response.ok) {
+    const error = new Error(`Impossible de charger les données (HTTP ${response.status}).`)
+    error.status = response.status
+    throw error
+  }
+  return response.json()
+}
+
+function normalizeMedia(item, type) {
+  const date = type === 'series' ? item.first_air_date : item.release_date
+  const genre = item.genres?.[0]?.name || genres[item.genre_ids?.[0]] || 'Genre non renseigné'
+  return {
+    id: item.id,
+    type,
+    title: type === 'series' ? item.name : item.title,
+    year: date?.slice(0, 4) || 'Année non renseignée',
+    genre,
+    duration: type === 'series'
+      ? (item.number_of_seasons ? `${item.number_of_seasons} saison(s)` : '')
+      : (item.runtime ? `${Math.floor(item.runtime / 60)} h ${String(item.runtime % 60).padStart(2, '0')}` : ''),
+    score: typeof item.vote_average === 'number' ? item.vote_average.toFixed(1) : '—',
+    poster: item.poster_path?.replace(/^\//, '') || null,
+    backdrop: item.backdrop_path?.replace(/^\//, '') || null,
+    description: item.overview || 'Aucun résumé disponible.',
+  }
+}
+
+function normalizeList(data, type) {
+  const items = Array.isArray(data) ? data : data?.results
+  if (!Array.isArray(items)) {
+    throw new Error('Le backend a renvoyé une liste de titres invalide.')
+  }
+  return items.map((item) => normalizeMedia(item, type))
+}
+
+export async function getMovies() {
+  return normalizeList(await request('/films'), 'movie')
+}
+
+export async function getSeries() {
+  return normalizeList(await request('/series'), 'series')
+}
+
+export async function getCatalog() {
+  const data = await request('/catalog')
+  return [...normalizeList(data.movies, 'movie'), ...normalizeList(data.series, 'series')]
+}
+
+export async function getMedia(id, isSeries = false) {
+  const type = isSeries ? 'series' : 'movie'
+  const path = isSeries ? '/series' : '/films'
+  return normalizeMedia(await request(`${path}/${encodeURIComponent(id)}`), type)
+}
+
+export async function getRandomMedia() {
+  const item = await request('/catalog/random')
+  return normalizeMedia(item, item.media_type === 'tv' || item.name ? 'series' : 'movie')
+}
+
+export async function getRandomMovies() {
+  return normalizeList(await request('/films/random/10'), 'movie')
+}
+
+export async function getRandomSeries() {
+  return normalizeList(await request('/series/random/10'), 'series')
+}
