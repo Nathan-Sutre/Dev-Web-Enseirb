@@ -5,10 +5,12 @@ import catalogRoutes from './src/routes/catalog.js';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import express from 'express';
+import 'dotenv/config';
 
 // Initialisation serveur
 const app = express();
-const PORT = 3000;
+const port = process.env.PORT || 3000;
+
 // Sécurité
 app.use(cors());
 // Configuration parser body
@@ -27,41 +29,7 @@ app.get("/", (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/', catalogRoutes);
 
-// Routes API TMDB
-async function getPopular(type) {
-    const response = await fetch(
-        `https://api.themoviedb.org/3/${type}/popular?language=fr-FR`,
-        {
-            headers: {
-                Authorization: `Bearer ${process.env.TMDB_TOKEN}`,
-                Accept: 'application/json',
-            },
-        },
-    );
-
-    if (!response.ok) {
-        throw new Error(`TMDB a répondu avec le statut ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data.results;
-}
-
-app.get('/catalog', async (req, res) => {
-    try {
-        const [movies, series] = await Promise.all([
-            getPopular('movie'),
-            getPopular('tv'),
-        ]);
-
-        res.json({ movies, series });
-    } catch (error) {
-        console.error(error.message);
-        res.status(502).json({ message: 'Impossible de charger le catalogue TMDB.' });
-    }
-});
-
 /* Démarrage BDD et serveur */
-app.listen(PORT, () =>
-    console.log(`SeenFlix a démarré sur http://localhost:${PORT}`)
+app.listen(port, () =>
+    console.log(`SeenFlix a démarré sur http://localhost:${port}`)
 );
