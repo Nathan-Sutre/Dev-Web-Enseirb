@@ -1,0 +1,245 @@
+openapi: 3.0.0
+info:
+  title: SeenFlix
+  version: 1.0.0
+  description: API REST pour une base de données de films et séries
+
+paths:
+  /:
+    get:
+      summary: Vérifier que le serveur répond
+      responses:
+        '200':
+          description: Succès
+
+  /films:
+    get:
+      summary: Récupérer la liste des films
+      responses:
+        '200':
+          description: Liste des films
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Work'
+
+  /films/{id}:
+    get:
+      summary: Récupérer un film par son identifiant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Film trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        '404':
+          description: Film introuvable
+
+  /series:
+    get:
+      summary: Récupérer la liste des séries
+      responses:
+        '200':
+          description: Liste des séries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Work'
+
+  /series/{id}:
+    get:
+      summary: Récupérer une série par son identifiant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Série trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        '404':
+          description: Série introuvable
+
+  /catalog:
+    get:
+      summary: Récupérer les films et séries
+      responses:
+        '200':
+          description: Liste des films et séries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Work'
+
+  /catalog/random:
+    get:
+      summary: Récupérer un film ou une série au hasard
+      responses:
+        '200':
+          description: Film ou série choisi au hasard
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+
+  /catalog/random/10:
+    get:
+      summary: Récupérer dix films ou séries au hasard
+      responses:
+        '200':
+          description: Dix œuvres choisies au hasard
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Work'
+
+  /auth/register:
+    post:
+      summary: Inscription d'un nouvel utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Inscription réalisée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterRequest'
+        '400':
+          description: Données invalides
+        '409':
+          description: Adresse mail déjà utilisée
+  /auth/login:
+    post:
+      summary: Authentification d'un utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Utilisateur authentifié
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        '400':
+          description: Requête invalide
+        '401':
+          description: Identifiants invalides
+  /auth/refresh:
+    post:
+      summary: Renouvellement de l'access token
+      parameters:
+        - name: X-Refresh-Token
+          in: header
+          required: true
+          description: Refresh token
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Token renouvelé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Refresh token invalide ou expiré
+
+components:
+  schemas:
+    Work:
+      type: object
+      required:
+        - id
+        - type
+        - title
+        - releaseYear
+        - overview
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum:
+            - film
+            - serie
+        title:
+          type: string
+        releaseYear:
+          type: integer
+        overview:
+          type: string
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          minLength: 8
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: password
+        password:
+          type: string
+          format: password
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        createdAt:
+          type: string
+          format: date-time
+    TokenResponse:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
