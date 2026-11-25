@@ -11,7 +11,108 @@ paths:
       responses:
         '200':
           description: Succès
-  
+
+  /films:
+    get:
+      summary: Récupérer la liste des films
+      responses:
+        '200':
+          description: Liste des films
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Work'
+
+  /films/{id}:
+    get:
+      summary: Récupérer un film par son identifiant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Film trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        '404':
+          description: Film introuvable
+
+  /series:
+    get:
+      summary: Récupérer la liste des séries
+      responses:
+        '200':
+          description: Liste des séries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Work'
+
+  /series/{id}:
+    get:
+      summary: Récupérer une série par son identifiant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Série trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+        '404':
+          description: Série introuvable
+
+  /catalog:
+    get:
+      summary: Récupérer les films et séries
+      responses:
+        '200':
+          description: Liste des films et séries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Work'
+
+  /catalog/random:
+    get:
+      summary: Récupérer un film ou une série au hasard
+      responses:
+        '200':
+          description: Film ou série choisi au hasard
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Work'
+
+  /catalog/random/10:
+    get:
+      summary: Récupérer dix films ou séries au hasard
+      responses:
+        '200':
+          description: Dix œuvres choisies au hasard
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Work'
+
   /auth/register:
     post:
       summary: Inscription d'un nouvel utilisateur
@@ -74,6 +175,28 @@ paths:
 
 components:
   schemas:
+    Work:
+      type: object
+      required:
+        - id
+        - type
+        - title
+        - releaseYear
+        - overview
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum:
+            - film
+            - serie
+        title:
+          type: string
+        releaseYear:
+          type: integer
+        overview:
+          type: string
     RegisterRequest:
       type: object
       required:
